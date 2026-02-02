@@ -541,6 +541,20 @@
             elements.customColor.style.display = isCustom ? 'block' : 'none';
             elements.customColorLabel.style.display = isCustom ? 'block' : 'none';
         });
+        // 折叠面板切换
+        document.querySelectorAll('.section-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                const section = e.target.closest('.form-section');
+                if (section) {
+                    section.classList.toggle('collapsed');
+                    // 切换原本的 V 符号
+                    const icon = toggle.querySelector('.toggle-icon');
+                    if (icon) {
+                        icon.textContent = section.classList.contains('collapsed') ? '▼' : '▲';
+                    }
+                }
+            });
+        });
     }
 
     // ============================================
@@ -571,6 +585,130 @@
             <textarea class="phase-content" rows="2" placeholder="阶段内容，每行一项..."></textarea>
         `;
         elements.roadmapPhases.appendChild(newPhase);
+    }
+
+    // ============================================
+    // 动态渲染高级配置
+    // ============================================
+    function renderAdvancedConfig() {
+        const container = document.getElementById('dynamicAdvancedConfig');
+        if (!container) return;
+
+        const target = state.productType === 'ppt' ? state.selectedPPTTemplate : state.selectedIndustry;
+        if (!target) return;
+
+        // 更新说明文字
+        const desc = document.getElementById('advancedConfigDesc');
+        if (desc) {
+            desc.textContent = `正在为 [${target.name}] 配置高级专业参数`;
+        }
+
+        const config = target.advancedConfig || [
+            { id: 'userPath', title: '👥 用户升级路径', type: 'text', label: '路径定义', placeholder: '例如：User → Promotor → Merchant' },
+            { id: 'roadmap', title: '🗺️ Roadmap 阶段规划', type: 'roadmap', label: '里程碑' },
+            { id: 'cta', title: '🎯 CTA按钮配置', type: 'cta', label: '按钮文案' }
+        ];
+
+        container.innerHTML = config.map(item => {
+            let content = '';
+            if (item.type === 'text') {
+                content = `
+                    <div class="form-group">
+                        <label for="${item.id}">${item.label}</label>
+                        <input type="text" id="${item.id}" placeholder="${item.placeholder || ''}" class="dynamic-input" data-id="${item.id}">
+                    </div>
+                `;
+            } else if (item.type === 'roadmap') {
+                content = `
+                    <div id="roadmapPhases" class="phases-list">
+                        <div class="phase-item">
+                            <div class="phase-header">
+                                <span class="phase-label">Phase 1</span>
+                                <input type="text" class="phase-title" placeholder="阶段名称">
+                            </div>
+                            <textarea class="phase-content" rows="2" placeholder="内容点..."></textarea>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-add" id="addPhase">➕ 添加阶段</button>
+                `;
+            } else if (item.type === 'token') {
+                content = `
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Token名称</label>
+                            <input type="text" id="tokenName" placeholder="例如：CU Token" class="dynamic-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Token类型</label>
+                            <select id="tokenType" class="dynamic-input">
+                                <option value="Utility">Utility</option>
+                                <option value="Governance">Governance</option>
+                                <option value="RWA">RWA</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            } else if (item.type === 'cta') {
+                content = `
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>主要CTA</label>
+                            <input type="text" id="primaryCTA" placeholder="主按钮内容" class="dynamic-input">
+                        </div>
+                        <div class="form-group">
+                            <label>次要CTA</label>
+                            <input type="text" id="secondaryCTA" placeholder="次按钮内容" class="dynamic-input">
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="form-section collapsible collapsed" data-type="${item.type}">
+                    <button type="button" class="section-toggle">
+                        <h3>${item.title}</h3>
+                        <span class="toggle-icon">▼</span>
+                    </button>
+                    <div class="section-content-wrapper">
+                        ${content}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // 绑定折叠点击事件
+        container.querySelectorAll('.section-toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const section = toggle.closest('.form-section');
+                section.classList.toggle('collapsed');
+                const icon = toggle.querySelector('.toggle-icon');
+                if (icon) {
+                    icon.textContent = section.classList.contains('collapsed') ? '▼' : '▲';
+                }
+            });
+        });
+
+        // 绑定Roadmap添加按钮
+        const addPhaseBtn = container.querySelector('#addPhase');
+        if (addPhaseBtn) {
+            addPhaseBtn.addEventListener('click', () => {
+                const roadmapContainer = container.querySelector('#roadmapPhases');
+                const phaseCount = roadmapContainer.querySelectorAll('.phase-item').length + 1;
+                const newPhase = document.createElement('div');
+                newPhase.className = 'phase-item';
+                newPhase.innerHTML = `
+                    <div class="phase-header">
+                        <span class="phase-label">Phase ${phaseCount}</span>
+                        <input type="text" class="phase-title" placeholder="阶段名称">
+                    </div>
+                    <textarea class="phase-content" rows="2" placeholder="内容点..."></textarea>
+                `;
+                roadmapContainer.appendChild(newPhase);
+            });
+        }
+
+        // 重新缓存 RoadmapPhases 元素
+        elements.roadmapPhases = document.getElementById('roadmapPhases');
     }
 
     // ============================================
@@ -625,6 +763,11 @@
     // ============================================
     function goToStep(step) {
         state.currentStep = step;
+
+        // 进入 Step 4 时渲染动态配置
+        if (step === 4) {
+            renderAdvancedConfig();
+        }
 
         // 计算实际步骤（快速模式跳过Step 4）
         const totalSteps = state.mode === 'pro' ? 5 : 4;
@@ -692,31 +835,30 @@
     // 收集高级配置数据
     // ============================================
     function collectAdvancedData() {
-        const data = {
-            userPath: document.getElementById('userPath')?.value.trim() || '',
-            pathDescription: document.getElementById('pathDescription')?.value.trim() || '',
-            tokenName: document.getElementById('tokenName')?.value.trim() || '',
-            tokenType: document.getElementById('tokenType')?.value || '',
-            tokenUtility: document.getElementById('tokenUtility')?.value.trim() || '',
-            tokenDisclaimer: document.getElementById('tokenDisclaimer')?.value.trim() || '',
-            primaryCTA: document.getElementById('primaryCTA')?.value.trim() || '',
-            secondaryCTA: document.getElementById('secondaryCTA')?.value.trim() || '',
-            roadmap: []
-        };
+        const data = {};
 
-        // 收集Roadmap
-        const phaseItems = elements.roadmapPhases.querySelectorAll('.phase-item');
-        phaseItems.forEach((item, index) => {
-            const title = item.querySelector('.phase-title').value.trim();
-            const content = item.querySelector('.phase-content').value.trim();
-            if (title || content) {
-                data.roadmap.push({
-                    phase: `Phase ${index + 1}`,
-                    title: title,
-                    items: content.split('\n').filter(line => line.trim())
-                });
-            }
+        // 收集动态输入框
+        const dynamicInputs = document.querySelectorAll('.dynamic-input');
+        dynamicInputs.forEach(input => {
+            data[input.id] = input.value.trim();
         });
+
+        // 收集Roadmap (如果存在)
+        if (elements.roadmapPhases) {
+            data.roadmap = [];
+            const phaseItems = elements.roadmapPhases.querySelectorAll('.phase-item');
+            phaseItems.forEach((item, index) => {
+                const title = item.querySelector('.phase-title').value.trim();
+                const content = item.querySelector('.phase-content').value.trim();
+                if (title || content) {
+                    data.roadmap.push({
+                        phase: `Phase ${index + 1}`,
+                        title: title,
+                        items: content.split('\n').filter(line => line.trim())
+                    });
+                }
+            });
+        }
 
         // 收集首页Sections
         data.homeSections = [];

@@ -40,6 +40,11 @@ const INDUSTRIES = [
                 description: '联系方式和咨询入口',
                 sections: ['联系表单', '公司地址', '社交媒体', '在线客服']
             }
+        ],
+        advancedConfig: [
+            { id: 'userGrowth', title: '👥 增长与留存路径', type: 'text', label: '用户增长阶段', placeholder: '例如：免费版 → 基础版 → 专业版 → 企业版' },
+            { id: 'techRoadmap', title: '🗺️ 技术/产品迭代规划', type: 'roadmap', label: '里程碑计划' },
+            { id: 'ctaGroup', title: '🎯 核心转化点配置', type: 'cta', label: '主次按钮文字' }
         ]
     },
     {
@@ -78,6 +83,11 @@ const INDUSTRIES = [
                 description: '在线预约和外卖服务',
                 sections: ['在线预约', '外卖平台', '会员服务', '联系电话']
             }
+        ],
+        advancedConfig: [
+            { id: 'loyaltyProgram', title: '💳 会员与积分体系', type: 'text', label: '会员等级/权益', placeholder: '例如：普通顾客 → 白金会员 → 黑卡尊享' },
+            { id: 'expansionPlan', title: '📍 品牌扩张/连锁规划', type: 'roadmap', label: '拓店时间轴' },
+            { id: 'serviceCTA', title: '🛎️ 预约/订餐转化', type: 'cta', label: '预约按钮文字' }
         ]
     },
     {
@@ -685,6 +695,11 @@ const INDUSTRIES = [
             { term: 'TVL', fullName: 'Total Value Locked', chinese: '总锁仓价值' },
             { term: 'APY', fullName: 'Annual Percentage Yield', chinese: '年化收益率' },
             { term: 'LTV', fullName: 'Loan to Value', chinese: '贷款价值比' }
+        ],
+        advancedConfig: [
+            { id: 'assetOnboarding', title: '⚖️ 资产上链/核销流程', type: 'text', label: '核销机制', placeholder: '描述底层资产如何与链上Token锚定' },
+            { id: 'rwaRoadmap', title: '🗺️ 合规与发行路线图', type: 'roadmap', label: '合规里程碑' },
+            { id: 'investorCTA', title: '💰 投资与KYC入口', type: 'cta', label: '立即投资/KYC按钮文案' }
         ]
     }
 ];
@@ -1231,6 +1246,10 @@ const PPT_TEMPLATES = [
             { name: '融资信息', icon: '💰', sections: ['融资轮次', '估值', '资金用途'] },
             { name: '合规声明', icon: '⚖️', sections: ['法律架构', '合规框架', '风险披露'] },
             { name: '联系方式', icon: '📱', sections: ['官网', '社交媒体', 'Discord/TG'] }
+        ],
+        advancedConfig: [
+            { id: 'pptNotes', title: '🎙️ 演讲者备注建议', type: 'text', label: '备注重点', placeholder: '描述每页幻灯片应该强调的演讲要点' },
+            { id: 'pptStyle', title: '🎨 视觉动画风格', type: 'text', label: '切换动画', placeholder: '例如：淡入淡出、推入、平滑过渡等' }
         ]
     }
 ];

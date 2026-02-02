@@ -75,3 +75,4 @@ Minicopper 是资产，CU 是使用
 4. PPT模式切换逻辑和UI
 5. PPT结构预览功能
 6. PPT提示词生成函数
+把代码提交到github

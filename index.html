@@ -267,100 +267,12 @@ CU = Currency（被使用的货币）"></textarea>
             <section class="step-content pro-feature" id="step4" style="display:none;">
                 <div class="section-header">
                     <h2>⚙️ 高级配置</h2>
-                    <p>配置用户路径、Roadmap和专业模块</p>
+                    <p id="advancedConfigDesc">针对不同行业/模板的深度配置项</p>
                 </div>
 
                 <form class="content-form" id="advancedForm">
-                    <!-- 用户路径 -->
-                    <div class="form-section">
-                        <h3>👥 用户升级路径</h3>
-                        <p class="helper-text">定义用户从入门到高级的成长路径</p>
-
-                        <div class="form-group">
-                            <label for="userPath">路径定义（用→分隔）</label>
-                            <input type="text" id="userPath"
-                                placeholder="例如：User → Promotor → Merchant → Banker → Partner">
-                        </div>
-                        <div class="form-group">
-                            <label for="pathDescription">路径说明</label>
-                            <textarea id="pathDescription" rows="3" placeholder="描述每个阶段的权益和升级条件..."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Roadmap -->
-                    <div class="form-section">
-                        <h3>🗺️ Roadmap 阶段规划</h3>
-                        <div id="roadmapPhases" class="phases-list">
-                            <div class="phase-item">
-                                <div class="phase-header">
-                                    <span class="phase-label">Phase 1</span>
-                                    <input type="text" class="phase-title" placeholder="阶段名称，例如：Asset Foundation">
-                                </div>
-                                <textarea class="phase-content" rows="2" placeholder="阶段内容，每行一项..."></textarea>
-                            </div>
-                            <div class="phase-item">
-                                <div class="phase-header">
-                                    <span class="phase-label">Phase 2</span>
-                                    <input type="text" class="phase-title" placeholder="阶段名称，例如：Application & Usage">
-                                </div>
-                                <textarea class="phase-content" rows="2" placeholder="阶段内容，每行一项..."></textarea>
-                            </div>
-                            <div class="phase-item">
-                                <div class="phase-header">
-                                    <span class="phase-label">Phase 3</span>
-                                    <input type="text" class="phase-title"
-                                        placeholder="阶段名称，例如：Financial Infrastructure">
-                                </div>
-                                <textarea class="phase-content" rows="2" placeholder="阶段内容，每行一项..."></textarea>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-secondary btn-add" id="addPhase">➕ 添加阶段</button>
-                    </div>
-
-                    <!-- Tokenomics（Web3专用） -->
-                    <div class="form-section" id="tokenomicsSection">
-                        <h3>🪙 Tokenomics（Web3项目）</h3>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="tokenName">Token名称</label>
-                                <input type="text" id="tokenName" placeholder="例如：CU Token">
-                            </div>
-                            <div class="form-group">
-                                <label for="tokenType">Token类型</label>
-                                <select id="tokenType">
-                                    <option value="">请选择...</option>
-                                    <option value="Utility Token">Utility Token（功能型）</option>
-                                    <option value="Governance Token">Governance Token（治理型）</option>
-                                    <option value="Security Token">Security Token（证券型）</option>
-                                    <option value="RWA Token">RWA Token（真实资产）</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="tokenUtility">Token用途</label>
-                            <textarea id="tokenUtility" rows="3" placeholder="描述Token的核心用途和使用场景..."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="tokenDisclaimer">合规声明</label>
-                            <textarea id="tokenDisclaimer" rows="2"
-                                placeholder="例如：CU is a utility token designed for ecosystem usage only."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- CTA配置 -->
-                    <div class="form-section">
-                        <h3>🎯 CTA按钮配置</h3>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="primaryCTA">主要CTA</label>
-                                <input type="text" id="primaryCTA" placeholder="例如：Enter the Ecosystem →">
-                            </div>
-                            <div class="form-group">
-                                <label for="secondaryCTA">次要CTA</label>
-                                <input type="text" id="secondaryCTA" placeholder="例如：Understand How CU Works →">
-                            </div>
-                        </div>
-                    </div>
+                    <!-- 动态渲染容器 -->
+                    <div id="dynamicAdvancedConfig"></div>
                 </form>
 
                 <div class="btn-group">

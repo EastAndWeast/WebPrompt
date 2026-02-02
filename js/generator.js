@@ -119,6 +119,7 @@ ${targetCustomers ? `\n### 目标客户群体\n${targetCustomers}` : ''}
      * @returns {string} 生成的提示词
      */
     generatePro(data) {
+        // 使用解构获取基本信息，其余作为高级配置处理
         const {
             industry,
             structure,
@@ -133,21 +134,16 @@ ${targetCustomers ? `\n### 目标客户群体\n${targetCustomers}` : ''}
             designTone,
             customColor,
             additionalNotes,
-            // Pro模式特有
-            coreDistinction,
-            anchorSentence,
-            multiMeaning,
-            userPath,
-            pathDescription,
-            tokenName,
-            tokenType,
-            tokenUtility,
-            tokenDisclaimer,
-            primaryCTA,
-            secondaryCTA,
             roadmap,
-            homeSections
+            homeSections,
+            storyStructure
         } = data;
+
+        const knownFields = [
+            'industry', 'structure', 'companyName', 'slogan', 'subSlogan', 'description',
+            'products', 'advantages', 'targetCustomers', 'colorStyle', 'designTone',
+            'customColor', 'additionalNotes', 'roadmap', 'homeSections', 'storyStructure'
+        ];
 
         let prompt = `你是一位专业的官网设计师和前端开发专家。请帮我设计并开发一个**${industry.name}**类型的企业官网。
 
@@ -157,20 +153,25 @@ ${targetCustomers ? `\n### 目标客户群体\n${targetCustomers}` : ''}
 
 `;
 
-        // 核心区分点
-        if (coreDistinction) {
-            prompt += `**核心区分**：${coreDistinction}\n\n`;
-        }
+        // 品牌多重含义（由于已包含在 data 中，此处统一处理）
+        const coreStoryFields = {
+            'coreDistinction': '核心区分点',
+            'anchorSentence': '锚点句',
+            'multiMeaning': '品牌多重含义'
+        };
 
-        // 锚点句
-        if (anchorSentence) {
-            prompt += `**锚点句（全站固定使用）**：\n> ${anchorSentence}\n\n`;
-        }
+        let hasCoreStory = false;
+        Object.entries(coreStoryFields).forEach(([key, label]) => {
+            if (data[key]) {
+                if (!hasCoreStory) {
+                    prompt += `\n### 核心叙事架构\n`;
+                    hasCoreStory = true;
+                }
+                prompt += `**${label}**：${data[key]}\n\n`;
+            }
+        });
 
-        // 品牌多重含义
-        if (multiMeaning) {
-            prompt += `**品牌多重含义**：\n${multiMeaning}\n\n`;
-        }
+        knownFields.push(...Object.keys(coreStoryFields));
 
         prompt += `---
 
@@ -181,12 +182,18 @@ ${slogan ? `- **主标题/Slogan**：${slogan}` : ''}
 ${subSlogan ? `- **副标题**：${subSlogan}` : ''}
 `;
 
-        // CTA按钮
-        if (primaryCTA || secondaryCTA) {
-            prompt += `\n**CTA按钮**：\n`;
-            if (primaryCTA) prompt += `- 主要CTA：${primaryCTA}\n`;
-            if (secondaryCTA) prompt += `- 次要CTA：${secondaryCTA}\n`;
-        }
+        // 动态高级配置（行业深度参数）
+        let hasAdvancedConfig = false;
+        Object.keys(data).forEach(key => {
+            if (!knownFields.includes(key) && data[key]) {
+                if (!hasAdvancedConfig) {
+                    prompt += `\n--- \n\n# 🛠️ 行业深度配置\n\n`;
+                    hasAdvancedConfig = true;
+                }
+                const label = this.getLabelForKey(key, industry);
+                prompt += `- **${label}**：${data[key]}\n`;
+            }
+        });
 
         if (description) {
             prompt += `\n### 公司简介\n${description}\n`;
@@ -620,6 +627,31 @@ ${additionalNotes}
 请基于以上结构，设计一套专业且具有视觉冲击力的PPT演示文稿。`;
 
         return prompt;
+    },
+
+    /**
+     * 根据Key获取友好显示名
+     */
+    getLabelForKey(key, industry) {
+        if (!industry) return key;
+        const config = industry.advancedConfig || [];
+        const item = config.find(c => c.id === key);
+        if (item) return item.label || item.title;
+
+        // 兜底逻辑
+        const commonMap = {
+            'userPath': '用户路径',
+            'pathDescription': '路径说明',
+            'tokenName': 'Token名称',
+            'tokenType': 'Token类型',
+            'tokenUtility': 'Token用途',
+            'tokenDisclaimer': '合规声明',
+            'primaryCTA': '主要CTA按钮',
+            'secondaryCTA': '次要CTA按钮',
+            'pptNotes': '演讲者备注建议',
+            'pptStyle': '视觉动画风格'
+        };
+        return commonMap[key] || key;
     }
 };
 

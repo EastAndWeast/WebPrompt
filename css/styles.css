@@ -1558,6 +1558,71 @@ select option {
     }
 }
 
+/* ============================================
+   折叠面板 (Collapsible Sections)
+   ============================================ */
+.form-section.collapsible {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+    transition: all var(--transition-fast);
+}
+
+.form-section.collapsible.collapsed {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.section-toggle {
+    width: 100%;
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-glass);
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: background var(--transition-fast);
+}
+
+.section-toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.toggle-icon {
+    font-size: 0.8rem;
+    transition: transform var(--transition-fast);
+}
+
+.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.section-content-wrapper {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+    transition: max-height var(--transition-md) ease-in-out, opacity var(--transition-fast);
+}
+
+.collapsed .section-content-wrapper {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    border-top: none;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.form-section.collapsible h3 {
+    margin-bottom: 0;
+}
+
 /* 超小屏幕（小于360px） */
 @media (max-width: 360px) {
     .header h1 {
