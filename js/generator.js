@@ -539,6 +539,87 @@ ${storyStructure.description}
 `;
 
         return text;
+    },
+
+    /**
+     * 生成PPT提示词
+     * @param {Object} data - PPT相关数据
+     * @returns {string} PPT提示词
+     */
+    generatePPT(data) {
+        const { template, companyName, description, colorStyle, additionalNotes } = data;
+
+        let prompt = `# PPT演示文稿设计提示词
+
+## 📊 PPT类型
+**${template.name}** - ${template.description}
+
+`;
+
+        if (companyName) {
+            prompt += `## 🏢 基本信息
+**公司/项目名称**：${companyName}
+`;
+            if (description) {
+                prompt += `**简介**：${description}
+`;
+            }
+            prompt += `
+`;
+        }
+
+        prompt += `## 📑 幻灯片结构（共${template.slides.length}页）
+
+`;
+
+        template.slides.forEach((slide, index) => {
+            prompt += `### 第${index + 1}页：${slide.icon} ${slide.name}
+**建议内容**：${slide.sections.join(' | ')}
+
+`;
+        });
+
+        prompt += `---
+
+## 🎨 设计要求
+
+`;
+
+        if (colorStyle) {
+            prompt += `**配色方案**：${colorStyle}
+`;
+        }
+
+        prompt += `
+### 视觉风格建议
+- **整体风格**：专业、现代、简洁
+- **字体选择**：标题使用粗体无衬线字体，正文使用易读字体
+- **图表设计**：数据可视化清晰，配色协调
+- **留白运用**：适当留白，避免信息过载
+- **动效过渡**：适度使用，不要过于花哨
+
+`;
+
+        if (additionalNotes) {
+            prompt += `### 特殊要求
+${additionalNotes}
+
+`;
+        }
+
+        prompt += `---
+
+## 💡 制作建议
+
+1. **内容精炼**：每页PPT只承载一个核心观点
+2. **视觉统一**：保持整套PPT的视觉风格一致性
+3. **数据支撑**：用数据和案例增强说服力
+4. **故事线条**：按照逻辑顺序组织内容，形成完整叙事
+5. **行动导向**：明确期望观众采取的行动
+
+请基于以上结构，设计一套专业且具有视觉冲击力的PPT演示文稿。`;
+
+        return prompt;
     }
 };
 

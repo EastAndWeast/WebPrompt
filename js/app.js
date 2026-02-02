@@ -10,9 +10,11 @@
     // ============================================
     const state = {
         currentStep: 1,
+        productType: 'website', // 'website' 或 'ppt'
         mode: 'simple', // 'simple' 或 'pro'
         selectedIndustry: null,
-        selectedStoryStructure: null, // 新增：选中的故事结构
+        selectedPPTTemplate: null, // PPT模板
+        selectedStoryStructure: null, // 故事结构
         formData: {},
         advancedData: {},
         homeSections: []
@@ -22,6 +24,9 @@
     // DOM 元素缓存
     // ============================================
     const elements = {
+        // 产品类型切换
+        productBtns: document.querySelectorAll('.product-btn'),
+
         // 模式切换
         modeBtns: document.querySelectorAll('.mode-btn'),
         stepIndicator: document.getElementById('stepIndicator'),
@@ -158,6 +163,54 @@
     }
 
     // ============================================
+    // 产品类型切换
+    // ============================================
+    function setProductType(type) {
+        state.productType = type;
+
+        // 更新按钮状态
+        elements.productBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.product === type);
+        });
+
+        // 切换显示内容
+        if (type === 'website') {
+            renderIndustryCards();
+            document.querySelector('.section-header h2').textContent = '🔍 选择您的行业';
+            document.querySelector('.section-header p').textContent = '请选择或输入您的行业类型，我们将为您提供专业的网站结构模板';
+        } else {
+            renderPPTCards();
+            document.querySelector('.section-header h2').textContent = '📊 选择PPT类型';
+            document.querySelector('.section-header p').textContent = '请选择您要制作的PPT类型，我们将为您提供专业的幻灯片结构';
+        }
+
+        // 重置选择
+        state.selectedIndustry = null;
+        state.selectedPPTTemplate = null;
+        state.currentStep = 1;
+        goToStep(1);
+
+        showToast(type === 'website' ? '已切换到官网模式 🌐' : '已切换到PPT模式 📊');
+        saveToStorage();
+    }
+
+    // ============================================
+    // 渲染PPT模板卡片
+    // ============================================
+    function renderPPTCards() {
+        const templates = window.IndustryData.getPPTTemplates();
+
+        elements.industryGrid.innerHTML = templates.map(template => `
+            <div class="industry-card ppt-card ${template.isPro ? 'pro-industry' : ''}" data-id="${template.id}" data-type="ppt">
+                <span class="industry-icon">${template.icon}</span>
+                <span class="industry-name">${template.name}</span>
+                <span class="industry-desc">${template.description}</span>
+                ${template.isPro ? '<span class="pro-tag">Pro</span>' : ''}
+            </div>
+        `).join('');
+    }
+
+    // ============================================
     // 渲染行业卡片
     // ============================================
     function renderIndustryCards() {
@@ -198,6 +251,58 @@
                 selectStoryStructure(card.dataset.id);
             });
         });
+    }
+
+    // ============================================
+    // 选择PPT模板
+    // ============================================
+    function selectPPTTemplate(templateId) {
+        const template = window.IndustryData.getPPTTemplateById(templateId);
+        if (!template) return;
+
+        state.selectedPPTTemplate = template;
+
+        // 更新卡片选中状态
+        elements.industryGrid.querySelectorAll('.industry-card').forEach(card => {
+            card.classList.toggle('selected', card.dataset.id === templateId);
+        });
+
+        // 进入Step 2
+        goToStep(2);
+
+        // 渲染PPT结构预览
+        renderPPTStructurePreview(template);
+    }
+
+    // ============================================
+    // 渲染PPT结构预览
+    // ============================================
+    function renderPPTStructurePreview(template) {
+        elements.selectedIndustryName.textContent = template.name + ' PPT';
+
+        // 隐藏故事结构选择（PPT模式不需要）
+        const storytellingSection = document.querySelector('.storytelling-section');
+        if (storytellingSection) {
+            storytellingSection.style.display = 'none';
+        }
+
+        // 渲染幻灯片结构
+        elements.structurePreview.innerHTML = template.slides.map((slide, index) => `
+            <div class="structure-item">
+                <span class="structure-icon">${slide.icon}</span>
+                <div class="structure-info">
+                    <h4>第${index + 1}页: ${slide.name}</h4>
+                    <div class="structure-tags">
+                        ${slide.sections.map(s => `<span class="structure-tag">${s}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        // 隐藏首页Section配置
+        if (elements.homeSectionsConfig) {
+            elements.homeSectionsConfig.style.display = 'none';
+        }
     }
 
     // ============================================
@@ -328,17 +433,28 @@
             elements.themeToggle.addEventListener('click', toggleTheme);
         }
 
+        // 产品类型切换
+        elements.productBtns.forEach(btn => {
+            btn.addEventListener('click', () => setProductType(btn.dataset.product));
+        });
+
         // 模式切换
         elements.modeBtns.forEach(btn => {
             btn.addEventListener('click', () => setMode(btn.dataset.mode));
         });
 
-        // 行业卡片点击
+        // 行业/PPT卡片点击
         elements.industryGrid.addEventListener('click', (e) => {
             const card = e.target.closest('.industry-card');
             if (card) {
-                const industryId = card.dataset.id;
-                selectIndustry(industryId);
+                const id = card.dataset.id;
+                const type = card.dataset.type;
+
+                if (type === 'ppt') {
+                    selectPPTTemplate(id);
+                } else {
+                    selectIndustry(id);
+                }
             }
         });
 
