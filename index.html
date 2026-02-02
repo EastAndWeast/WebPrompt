@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>官网提示词模板引擎 Pro - AI提示词生成器</title>
+    <meta name="description" content="专业级官网AI提示词生成器，支持核心叙事、多Section配置、用户路径定义">
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle" id="themeToggle" title="切换主题">
+        <span class="theme-icon-light">☀️</span>
+        <span class="theme-icon-dark">🌙</span>
+    </button>
+
+    <div class="app-container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">✨</span>
+                <h1>官网提示词引擎 <span class="pro-badge">Pro</span></h1>
+            </div>
+            <p class="tagline">专业级官网AI提示词生成器</p>
+
+            <!-- 模式切换 -->
+            <div class="mode-switcher">
+                <button class="mode-btn active" data-mode="simple">🚀 快速模式</button>
+                <button class="mode-btn" data-mode="pro">⚡ 专业模式</button>
+            </div>
+        </header>
+
+        <!-- 步骤指示器 -->
+        <div class="step-indicator" id="stepIndicator">
+            <div class="step active" data-step="1">
+                <div class="step-number">1</div>
+                <span class="step-label">选择行业</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="2">
+                <div class="step-number">2</div>
+                <span class="step-label">结构配置</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="3">
+                <div class="step-number">3</div>
+                <span class="step-label">补充内容</span>
+            </div>
+            <div class="step-line pro-step"></div>
+            <div class="step pro-step" data-step="4">
+                <div class="step-number">4</div>
+                <span class="step-label">高级配置</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="5">
+                <div class="step-number">5</div>
+                <span class="step-label">生成提示词</span>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- Step 1: 行业选择 -->
+            <section class="step-content active" id="step1">
+                <div class="section-header">
+                    <h2>🏢 选择您的行业</h2>
+                    <p>请选择或输入您的行业类型，我们将为您提供专业的网站结构模板</p>
+                </div>
+
+                <div class="industry-grid" id="industryGrid">
+                    <!-- 行业卡片由JS动态生成 -->
+                </div>
+
+                <div class="custom-input-wrapper">
+                    <label for="customIndustry">或者，输入您的行业：</label>
+                    <div class="input-group">
+                        <input type="text" id="customIndustry" placeholder="例如：Web3区块链、新能源汽车、宠物服务...">
+                        <button class="btn btn-primary" id="confirmCustomIndustry">确认</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: 结构配置 -->
+            <section class="step-content" id="step2">
+                <div class="section-header">
+                    <h2>📋 网站结构配置</h2>
+                    <p>以下是 <strong id="selectedIndustryName">-</strong> 行业官网的推荐结构，可自定义调整</p>
+                </div>
+
+                <!-- 故事结构选择 -->
+                <div class="storytelling-section">
+                    <h3>🎬 选择叙事结构 <span class="new-tag">New</span></h3>
+                    <p class="helper-text">好莱坞经典讲故事方式，让您的网站更有吸引力</p>
+
+                    <div class="storytelling-grid" id="storytellingGrid">
+                        <!-- 故事结构卡片由JS动态生成 -->
+                    </div>
+
+                    <div class="storytelling-preview" id="storytellingPreview" style="display:none;">
+                        <!-- 选中结构的详细预览 -->
+                    </div>
+                </div>
+
+                <div class="structure-preview" id="structurePreview">
+                    <!-- 结构模板由JS动态生成 -->
+                </div>
+
+                <!-- 专业模式：首页Section配置 -->
+                <div class="pro-feature" id="homeSectionsConfig" style="display:none;">
+                    <div class="form-section">
+                        <h3>🏠 首页Section配置 <span class="pro-tag">Pro</span></h3>
+                        <p class="helper-text">定义首页的各个内容区块，可添加多个Section</p>
+
+                        <div id="homeSectionsList" class="sections-list">
+                            <!-- Section列表由JS动态生成 -->
+                        </div>
+
+                        <button class="btn btn-secondary btn-add" id="addHomeSection">
+                            ➕ 添加Section
+                        </button>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="backToStep1">← 重新选择</button>
+                    <button class="btn btn-primary" id="goToStep3">补充内容 →</button>
+                </div>
+            </section>
+
+            <!-- Step 3: 内容补充 -->
+            <section class="step-content" id="step3">
+                <div class="section-header">
+                    <h2>✏️ 补充业务信息</h2>
+                    <p>请填写以下信息，帮助我们生成更精准的提示词</p>
+                </div>
+
+                <form class="content-form" id="contentForm">
+                    <!-- 基本信息 -->
+                    <div class="form-section">
+                        <h3>📌 基本信息</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="companyName">公司/品牌名称 <span class="required">*</span></label>
+                                <input type="text" id="companyName" placeholder="例如：CU Power" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="slogan">Slogan / 口号</label>
+                                <input type="text" id="slogan"
+                                    placeholder="例如：Built on Real Assets. Used by Real People.">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="subSlogan">副标题 / 定位语</label>
+                            <input type="text" id="subSlogan"
+                                placeholder="例如：A Pre-RWA Application Layer for the AI Era">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">公司简介</label>
+                            <textarea id="description" rows="3" placeholder="简要描述公司的主营业务、历史、愿景等..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 核心叙事（专业模式） -->
+                    <div class="form-section pro-feature" id="coreNarrativeSection" style="display:none;">
+                        <h3>💎 核心叙事 <span class="pro-tag">Pro</span></h3>
+                        <p class="helper-text">定义贯穿全站的核心品牌叙事和关键区分点</p>
+
+                        <div class="form-group">
+                            <label for="coreDistinction">核心区分点</label>
+                            <input type="text" id="coreDistinction"
+                                placeholder="例如：CU ≠ Minicopper，Minicopper是资产，CU是使用">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="anchorSentence">锚点句（全站固定使用）</label>
+                            <input type="text" id="anchorSentence"
+                                placeholder="例如：Minicopter is the Asset. CU is the Usage.">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="multiMeaning">品牌多重含义（每行一个）</label>
+                            <textarea id="multiMeaning" rows="4" placeholder="例如：
+CU = See You（你会被看见）
+CU = Copper（AI世界的基础金属）
+CU = Currency（被使用的货币）"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 业务信息 -->
+                    <div class="form-section">
+                        <h3>💼 业务信息</h3>
+                        <div class="form-group">
+                            <label for="products">核心产品/服务</label>
+                            <textarea id="products" rows="3" placeholder="列出您的主要产品或服务，每行一个..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="advantages">核心优势/卖点</label>
+                            <textarea id="advantages" rows="3" placeholder="您的竞争优势是什么？为什么客户选择您？"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="targetCustomers">目标客户群体</label>
+                            <input type="text" id="targetCustomers" placeholder="例如：Web3投资者、新兴市场用户、企业客户...">
+                        </div>
+                    </div>
+
+                    <!-- 设计偏好 -->
+                    <div class="form-section">
+                        <h3>🎨 设计偏好</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="colorStyle">配色风格</label>
+                                <select id="colorStyle">
+                                    <option value="">请选择...</option>
+                                    <option value="科技蓝">科技蓝（专业、可信赖）</option>
+                                    <option value="活力橙">活力橙（年轻、活力）</option>
+                                    <option value="商务黑金">商务黑金（高端、奢华）</option>
+                                    <option value="自然绿">自然绿（环保、健康）</option>
+                                    <option value="简约白">简约白（简洁、现代）</option>
+                                    <option value="暖色调">暖色调（亲和、温馨）</option>
+                                    <option value="深色科技">深色科技（Web3风格）</option>
+                                    <option value="渐变紫蓝">渐变紫蓝（现代未来）</option>
+                                    <option value="自定义">自定义...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="designTone">设计调性</label>
+                                <select id="designTone">
+                                    <option value="">请选择...</option>
+                                    <option value="专业商务">专业商务</option>
+                                    <option value="创意时尚">创意时尚</option>
+                                    <option value="简约极简">简约极简</option>
+                                    <option value="温馨亲和">温馨亲和</option>
+                                    <option value="科技未来">科技未来</option>
+                                    <option value="典雅高端">典雅高端</option>
+                                    <option value="Web3原生">Web3原生</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="customColor" id="customColorLabel" style="display:none;">自定义配色描述</label>
+                            <input type="text" id="customColor" style="display:none;" placeholder="例如：渐变紫粉色、深海蓝配金色...">
+                        </div>
+                        <div class="form-group">
+                            <label for="additionalNotes">其他要求/备注</label>
+                            <textarea id="additionalNotes" rows="2" placeholder="任何额外的设计要求或注意事项..."></textarea>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="backToStep2">← 返回</button>
+                    <button class="btn btn-primary" id="goToStep4Simple">生成提示词 ✨</button>
+                    <button class="btn btn-primary pro-feature" id="goToStep4Pro" style="display:none;">高级配置 →</button>
+                </div>
+            </section>
+
+            <!-- Step 4: 高级配置（专业模式） -->
+            <section class="step-content pro-feature" id="step4" style="display:none;">
+                <div class="section-header">
+                    <h2>⚙️ 高级配置</h2>
+                    <p>配置用户路径、Roadmap和专业模块</p>
+                </div>
+
+                <form class="content-form" id="advancedForm">
+                    <!-- 用户路径 -->
+                    <div class="form-section">
+                        <h3>👥 用户升级路径</h3>
+                        <p class="helper-text">定义用户从入门到高级的成长路径</p>
+
+                        <div class="form-group">
+                            <label for="userPath">路径定义（用→分隔）</label>
+                            <input type="text" id="userPath"
+                                placeholder="例如：User → Promotor → Merchant → Banker → Partner">
+                        </div>
+                        <div class="form-group">
+                            <label for="pathDescription">路径说明</label>
+                            <textarea id="pathDescription" rows="3" placeholder="描述每个阶段的权益和升级条件..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Roadmap -->
+                    <div class="form-section">
+                        <h3>🗺️ Roadmap 阶段规划</h3>
+                        <div id="roadmapPhases" class="phases-list">
+                            <div class="phase-item">
+                                <div class="phase-header">
+                                    <span class="phase-label">Phase 1</span>
+                                    <input type="text" class="phase-title" placeholder="阶段名称，例如：Asset Foundation">
+                                </div>
+                                <textarea class="phase-content" rows="2" placeholder="阶段内容，每行一项..."></textarea>
+                            </div>
+                            <div class="phase-item">
+                                <div class="phase-header">
+                                    <span class="phase-label">Phase 2</span>
+                                    <input type="text" class="phase-title" placeholder="阶段名称，例如：Application & Usage">
+                                </div>
+                                <textarea class="phase-content" rows="2" placeholder="阶段内容，每行一项..."></textarea>
+                            </div>
+                            <div class="phase-item">
+                                <div class="phase-header">
+                                    <span class="phase-label">Phase 3</span>
+                                    <input type="text" class="phase-title"
+                                        placeholder="阶段名称，例如：Financial Infrastructure">
+                                </div>
+                                <textarea class="phase-content" rows="2" placeholder="阶段内容，每行一项..."></textarea>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-add" id="addPhase">➕ 添加阶段</button>
+                    </div>
+
+                    <!-- Tokenomics（Web3专用） -->
+                    <div class="form-section" id="tokenomicsSection">
+                        <h3>🪙 Tokenomics（Web3项目）</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="tokenName">Token名称</label>
+                                <input type="text" id="tokenName" placeholder="例如：CU Token">
+                            </div>
+                            <div class="form-group">
+                                <label for="tokenType">Token类型</label>
+                                <select id="tokenType">
+                                    <option value="">请选择...</option>
+                                    <option value="Utility Token">Utility Token（功能型）</option>
+                                    <option value="Governance Token">Governance Token（治理型）</option>
+                                    <option value="Security Token">Security Token（证券型）</option>
+                                    <option value="RWA Token">RWA Token（真实资产）</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tokenUtility">Token用途</label>
+                            <textarea id="tokenUtility" rows="3" placeholder="描述Token的核心用途和使用场景..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="tokenDisclaimer">合规声明</label>
+                            <textarea id="tokenDisclaimer" rows="2"
+                                placeholder="例如：CU is a utility token designed for ecosystem usage only."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- CTA配置 -->
+                    <div class="form-section">
+                        <h3>🎯 CTA按钮配置</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="primaryCTA">主要CTA</label>
+                                <input type="text" id="primaryCTA" placeholder="例如：Enter the Ecosystem →">
+                            </div>
+                            <div class="form-group">
+                                <label for="secondaryCTA">次要CTA</label>
+                                <input type="text" id="secondaryCTA" placeholder="例如：Understand How CU Works →">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="backToStep3">← 返回</button>
+                    <button class="btn btn-primary" id="generatePromptPro">生成提示词 ✨</button>
+                </div>
+            </section>
+
+            <!-- Step 5: 生成提示词 -->
+            <section class="step-content" id="step5">
+                <div class="section-header">
+                    <h2>🎉 您的AI提示词已生成</h2>
+                    <p>复制以下提示词，发送给AI助手即可开始设计您的官网</p>
+                </div>
+
+                <div class="prompt-result">
+                    <div class="prompt-header">
+                        <span class="prompt-badge">AI Prompt</span>
+                        <div class="prompt-actions">
+                            <button class="btn btn-icon" id="copyPrompt" title="复制">
+                                📋 复制
+                            </button>
+                            <button class="btn btn-icon" id="downloadPrompt" title="下载">
+                                💾 下载
+                            </button>
+                        </div>
+                    </div>
+                    <div class="prompt-content" id="promptOutput">
+                        <!-- 生成的提示词将显示在这里 -->
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="backToEdit">← 修改内容</button>
+                    <button class="btn btn-primary" id="startOver">重新开始 🔄</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>官网提示词模板引擎 Pro © 2026 | 让每个企业都拥有专业官网</p>
+        </footer>
+    </div>
+
+    <!-- 复制成功提示 -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message">复制成功！</span>
+    </div>
+
+    <!-- Section模板（用于动态添加） -->
+    <template id="sectionTemplate">
+        <div class="section-config-item">
+            <div class="section-config-header">
+                <input type="text" class="section-title" placeholder="Section标题，例如：CU的三重核心叙事">
+                <button type="button" class="btn btn-icon btn-remove" title="删除">✕</button>
+            </div>
+            <textarea class="section-content" rows="3" placeholder="Section内容要点，每行一个..."></textarea>
+        </div>
+    </template>
+
+    <script src="js/industries.js"></script>
+    <script src="js/generator.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
